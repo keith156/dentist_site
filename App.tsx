@@ -314,9 +314,9 @@ const App: React.FC = () => {
               <div className="relative group hidden lg:block">
                 <div className="absolute -inset-4 bg-gradient-to-tr from-teal-400 to-blue-400 rounded-3xl blur-2xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
                 <img 
-                  src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=800&auto=format&fit=crop" 
-                  alt="Modern Dental Office" 
-                  className="relative rounded-3xl shadow-2xl w-full object-cover aspect-[4/5]"
+                  src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=1200&auto=format&fit=crop" 
+                  alt="Modern Dental Office Interior" 
+                  className="relative rounded-3xl shadow-2xl w-full object-cover aspect-[4/3] lg:aspect-[4/5]"
                 />
                 <div className="absolute -bottom-8 -left-8 bg-white p-6 rounded-2xl shadow-xl max-w-xs animate-bounce-slow">
                   <div className="flex items-center space-x-4">
@@ -360,7 +360,7 @@ const App: React.FC = () => {
               <div className="relative">
                 <img 
                   src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?q=80&w=800&auto=format&fit=crop" 
-                  alt="Our Clinic" 
+                  alt="Our Clinic Team" 
                   className="rounded-3xl shadow-2xl z-10 relative h-[600px] w-full object-cover"
                 />
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-teal-200/20 rounded-full blur-3xl -z-0"></div>
@@ -480,7 +480,6 @@ const App: React.FC = () => {
             </div>
 
             <div className="relative max-w-4xl mx-auto">
-              {/* Slider Container */}
               <div className="relative overflow-hidden h-[400px] sm:h-[350px]">
                 {TESTIMONIALS.map((t, index) => (
                   <div 
@@ -517,7 +516,6 @@ const App: React.FC = () => {
                 ))}
               </div>
 
-              {/* Navigation Arrows */}
               <button 
                 onClick={prevTestimonial}
                 className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 sm:-translate-x-16 bg-white p-4 rounded-full shadow-xl text-teal-600 hover:bg-teal-600 hover:text-white transition-all z-20 hidden sm:block border border-teal-50"
@@ -531,7 +529,6 @@ const App: React.FC = () => {
                 <ChevronRight size={24} />
               </button>
 
-              {/* Indicators */}
               <div className="flex justify-center space-x-3 mt-8">
                 {TESTIMONIALS.map((_, i) => (
                   <button 
