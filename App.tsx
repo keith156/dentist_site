@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Menu, 
   X, 
@@ -17,12 +17,14 @@ import {
   Stethoscope, 
   Activity,
   ArrowRight,
+  ChevronLeft,
   ChevronRight,
   Instagram,
   Facebook,
   Twitter,
   Loader2,
-  CheckCircle2
+  CheckCircle2,
+  Quote
 } from 'lucide-react';
 import { Service, Doctor, Testimonial, Feature } from './types';
 
@@ -94,21 +96,21 @@ const TESTIMONIALS: Testimonial[] = [
     id: 't1',
     author: 'Michael Chen',
     rating: 5,
-    content: "The best dental experience I've ever had. Dr. KK and the staff are incredibly friendly and the clinic is spotless.",
+    content: "The best dental experience I've ever had. Dr. KK and the staff are incredibly friendly and the clinic is spotless. My teeth have never looked better!",
     date: '2 months ago'
   },
   {
     id: 't2',
     author: 'Emily Johnson',
     rating: 5,
-    content: "My kids actually look forward to their dental visits now. Dr. Dan is amazing with children. Highly recommend!",
+    content: "My kids actually look forward to their dental visits now. Dr. Dan is amazing with children. Highly recommend to all parents!",
     date: '1 month ago'
   },
   {
     id: 't3',
     author: 'Robert Davies',
     rating: 5,
-    content: "Professional, efficient, and painless. Dr. Job took the time to explain my alignment plan clearly.",
+    content: "Professional, efficient, and painless. Dr. Job took the time to explain my alignment plan clearly. I'm already seeing great results.",
     date: '3 weeks ago'
   }
 ];
@@ -140,6 +142,7 @@ const App: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -148,6 +151,19 @@ const App: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const nextTestimonial = useCallback(() => {
+    setActiveTestimonial((prev) => (prev + 1) % TESTIMONIALS.length);
+  }, []);
+
+  const prevTestimonial = useCallback(() => {
+    setActiveTestimonial((prev) => (prev - 1 + TESTIMONIALS.length) % TESTIMONIALS.length);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(nextTestimonial, 5000);
+    return () => clearInterval(interval);
+  }, [nextTestimonial]);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
@@ -452,33 +468,79 @@ const App: React.FC = () => {
           </div>
         </section>
 
-        {/* Testimonials */}
-        <section id="testimonials" className="py-24 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Testimonials Slider */}
+        <section id="testimonials" className="py-24 bg-teal-50/50 overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
             <div className="text-center mb-16 space-y-4">
               <h2 className="text-4xl lg:text-5xl font-extrabold text-slate-900">What Patients Say</h2>
               <div className="flex items-center justify-center space-x-1">
                 {[1, 2, 3, 4, 5].map(i => <Star key={i} className="fill-yellow-400 text-yellow-400" size={20} />)}
-                <span className="ml-2 font-bold text-slate-700">4.9 / 5.0 (Based on 500+ Google Reviews)</span>
+                <span className="ml-2 font-bold text-slate-700">4.9 / 5.0 Rating</span>
               </div>
             </div>
-            <div className="grid md:grid-cols-3 gap-8">
-              {TESTIMONIALS.map((t) => (
-                <div key={t.id} className="p-8 rounded-3xl bg-slate-50 relative border border-slate-100">
-                  <div className="flex items-center space-x-1 mb-6">
-                    {Array.from({ length: t.rating }).map((_, i) => (
-                      <Star key={i} className="fill-yellow-400 text-yellow-400" size={16} />
-                    ))}
+
+            <div className="relative max-w-4xl mx-auto">
+              {/* Slider Container */}
+              <div className="relative overflow-hidden h-[400px] sm:h-[350px]">
+                {TESTIMONIALS.map((t, index) => (
+                  <div 
+                    key={t.id} 
+                    className={`absolute inset-0 w-full h-full flex flex-col items-center justify-center transition-all duration-700 ease-in-out p-6 sm:p-12 ${
+                      index === activeTestimonial 
+                        ? 'opacity-100 translate-x-0 pointer-events-auto' 
+                        : index < activeTestimonial 
+                          ? 'opacity-0 -translate-x-full pointer-events-none' 
+                          : 'opacity-0 translate-x-full pointer-events-none'
+                    }`}
+                  >
+                    <div className="bg-white p-8 sm:p-12 rounded-[2.5rem] shadow-2xl shadow-teal-900/5 relative w-full border border-teal-100">
+                      <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-teal-600 p-4 rounded-2xl text-white shadow-lg">
+                        <Quote size={28} />
+                      </div>
+                      
+                      <div className="flex items-center justify-center space-x-1 mb-8 pt-4">
+                        {Array.from({ length: t.rating }).map((_, i) => (
+                          <Star key={i} className="fill-yellow-400 text-yellow-400" size={18} />
+                        ))}
+                      </div>
+
+                      <p className="text-slate-700 italic leading-relaxed mb-10 text-lg sm:text-xl text-center max-w-2xl mx-auto">
+                        "{t.content}"
+                      </p>
+
+                      <div className="flex flex-col items-center border-t border-slate-100 pt-8">
+                        <span className="font-black text-slate-900 text-lg">{t.author}</span>
+                        <span className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-1">{t.date}</span>
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-slate-700 italic leading-relaxed mb-8 text-lg">
-                    "{t.content}"
-                  </p>
-                  <div className="flex items-center justify-between border-t border-slate-200 pt-6">
-                    <span className="font-bold text-slate-900">{t.author}</span>
-                    <span className="text-xs text-slate-500 font-semibold uppercase">{t.date}</span>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
+
+              {/* Navigation Arrows */}
+              <button 
+                onClick={prevTestimonial}
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 sm:-translate-x-16 bg-white p-4 rounded-full shadow-xl text-teal-600 hover:bg-teal-600 hover:text-white transition-all z-20 hidden sm:block border border-teal-50"
+              >
+                <ChevronLeft size={24} />
+              </button>
+              <button 
+                onClick={nextTestimonial}
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 sm:translate-x-16 bg-white p-4 rounded-full shadow-xl text-teal-600 hover:bg-teal-600 hover:text-white transition-all z-20 hidden sm:block border border-teal-50"
+              >
+                <ChevronRight size={24} />
+              </button>
+
+              {/* Indicators */}
+              <div className="flex justify-center space-x-3 mt-8">
+                {TESTIMONIALS.map((_, i) => (
+                  <button 
+                    key={i}
+                    onClick={() => setActiveTestimonial(i)}
+                    className={`h-2 transition-all duration-300 rounded-full ${i === activeTestimonial ? 'w-12 bg-teal-600' : 'w-2 bg-slate-300'}`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </section>
